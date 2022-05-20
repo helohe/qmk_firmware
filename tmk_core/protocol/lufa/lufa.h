@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2012 Jun Wako <wakojun@gmail.com>
  * This file is based on:
  *     LUFA-120219/Demos/Device/Lowlevel/KeyboardMouse
@@ -36,7 +36,8 @@
   this software.
 */
 
-#pragma once
+#ifndef _LUFA_H_
+#define _LUFA_H_
 
 #include <avr/io.h>
 #include <avr/wdt.h>
@@ -47,6 +48,8 @@
 #include <LUFA/Version.h>
 #include <LUFA/Drivers/USB/USB.h>
 #include "host.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,4 +58,23 @@ extern host_driver_t lufa_driver;
 
 #ifdef __cplusplus
 }
+#endif
+
+/* extra report structure */
+typedef struct {
+    uint8_t  report_id;
+    uint16_t usage;
+} __attribute__ ((packed)) report_extra_t;
+
+
+#if LUFA_VERSION_INTEGER < 0x120730
+    /* old API 120219 */
+    #define ENDPOINT_CONFIG(epnum, eptype, epdir, epsize, epbank)    Endpoint_ConfigureEndpoint(epnum, eptype, epdir, epsize, epbank)
+#else
+    /* new API >= 120730 */
+    #define ENDPOINT_BANK_SINGLE 1
+    #define ENDPOINT_BANK_DOUBLE 2
+    #define ENDPOINT_CONFIG(epnum, eptype, epdir, epsize, epbank)    Endpoint_ConfigureEndpoint((epdir) | (epnum) , eptype, epsize, epbank)
+#endif
+
 #endif
